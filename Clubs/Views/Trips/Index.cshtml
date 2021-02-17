@@ -1,0 +1,47 @@
+@model IEnumerable<Clubs.Models.TripViewModel>
+
+@{
+    ViewData["Title"] = "Trips";
+}
+
+<h1>Trips</h1> <a role="button" class="btn btn-outline-primary" asp-action="Create">Create Trip</a>
+<hr/>
+<div class="row">
+    <div class="card-columns">
+        @foreach (var item in Model) {
+            @if(item.IsVisible) {
+                <div class="card">
+                    <svg class="bd-placeholder-img card-img-top" width="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Image cap" height="180">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#8ce586"></rect>
+                    </svg>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name: @item.Date.ToString("yyyy-MM-dd")</h5>
+                        <p class="card-text">@item.BodyRendered</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Price: $@item.Price</li>
+                        @if (item.RequiredQualifications.Count > 0)
+                        {
+                            <li class="list-group-item">Required Qualifications: @String.Join(", ", item.RequiredQualifications)</li>
+                        }
+                        <li class="list-group-item">
+                            <a asp-action="SignUp" asp-route-id="@item.TripId" role="button" class="btn btn-outline-success">Sign Up</a>
+                            @if (@item.IsOrganizer)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.TripId" role="button" class="btn btn-outline-primary">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.TripId" role="button" class="btn btn-outline-danger">Delete</a>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .card-columns {
+        column-count: 2;
+    }
+</style>

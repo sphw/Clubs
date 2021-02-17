@@ -1,0 +1,86 @@
+@using System.Text.Json
+@model Clubs.Models.Trip
+
+@{ ViewData["Title"] = "Edit"; }
+
+<h1>Edit Trip</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" onsubmit="onSubmit()">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TripId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Description</label>
+                <input type="hidden" asp-for="Body" />
+                <div class="editor"></div>
+                <span asp-validation-for="Body" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Visible" /> @Html.DisplayNameFor(model => model.Visible)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Skill Level Required</label>
+                <div class="input-group">
+
+                    <select class="selectpicker" multiple>
+                        <option>Snow School</option>
+                        <option>Advanced Snow School</option>
+                        <option>Outdoor Lead</option>
+                        <option>Multipitch</option>
+                    </select>
+                    <input asp-for="RequiredQualifications" style="display: none;" value="@JsonSerializer.Serialize(Model.RequiredQualifications)"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript">
+        var editor = new Quill('.editor', { theme: "snow" });
+        var form = document.querySelector('form');
+        var body = document.querySelector('input[name=Body]');
+        var requiredQuals = document.querySelector('input[name=RequiredQualifications]');
+        var quals = JSON.parse(requiredQuals.value);
+        $('.selectpicker').selectpicker('val', quals);
+        editor.setContents(JSON.parse(body.value));
+        function onSubmit() {
+            var body = document.querySelector('input[name=Body]');
+            body.value = JSON.stringify(editor.getContents());
+            var requiredQuals = document.querySelector('input[name=RequiredQualifications]');
+            var picker = document.querySelector('select.selectpicker');
+            const selectedOpts = [...picker.options].filter((x) => x.selected).map((x) => x.value);
+            requiredQuals.value = JSON.stringify(selectedOpts);
+        }
+    </script>
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+}
